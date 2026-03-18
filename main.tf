@@ -67,3 +67,21 @@ module "lambda_roles" {
 
   tags = local.common_tags
 }
+
+module "lambda" {
+  source = "./modules/lambda"
+
+  project_name = local.project
+
+  deployment_artifacts_bucket = module.storage.deployment_artifacts_bucket_name
+
+  issuer_lambda_role_arn            = module.lambda_roles.issuer_lambda_role_arn
+  revocation_lambda_role_arn        = module.lambda_roles.revocation_lambda_role_arn
+  free_lambda_role_arn              = module.lambda_roles.free_lambda_role_arn
+  bitstring_updater_lambda_role_arn = module.lambda_roles.bitstring_updater_lambda_role_arn
+
+  credentials_table_stream_arn = module.dynamodb.credentials_table_stream_arn
+  bit_indices_table_stream_arn = module.dynamodb.bit_indices_table_stream_arn
+
+  tags = local.common_tags
+}
