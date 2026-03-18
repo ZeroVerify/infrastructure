@@ -25,6 +25,11 @@ variable "aws_region" {
   type        = string
 }
 
+variable "lambda_artifacts_bucket_arn" {
+  description = "ARN of the Lambda artifacts S3 bucket"
+  type        = string
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
