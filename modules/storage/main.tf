@@ -1,11 +1,11 @@
-resource "aws_s3_bucket" "lambda_artifacts" {
-  bucket = "${var.project_name}-lambda-artifacts"
+resource "aws_s3_bucket" "deployment_artifacts" {
+  bucket = "${var.project_name}-deployment-artifacts"
 
   tags = var.tags
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "lambda_artifacts" {
-  bucket = aws_s3_bucket.lambda_artifacts.id
+resource "aws_s3_bucket_lifecycle_configuration" "deployment_artifacts" {
+  bucket = aws_s3_bucket.deployment_artifacts.id
 
   rule {
     id     = "abort-incomplete-uploads"
@@ -19,8 +19,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "lambda_artifacts" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "lambda_artifacts" {
-  bucket = aws_s3_bucket.lambda_artifacts.id
+resource "aws_s3_bucket_public_access_block" "deployment_artifacts" {
+  bucket = aws_s3_bucket.deployment_artifacts.id
 
   block_public_acls       = true
   block_public_policy     = true

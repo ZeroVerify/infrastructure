@@ -33,9 +33,9 @@ module "github_oidc" {
   infrastructure_role_name    = "ZeroVerifyGitHubActionsInfra"
   lambda_deployment_role_name = "ZeroVerifyGitHubActionsLambdaDeployment"
 
-  aws_region                  = local.aws_region
-  lambda_artifacts_bucket_arn = module.storage.lambda_artifacts_bucket_arn
-  tags                        = local.common_tags
+  aws_region                      = local.aws_region
+  deployment_artifacts_bucket_arn = module.storage.deployment_artifacts_bucket_arn
+  tags                            = local.common_tags
 }
 
 module "dynamodb" {
@@ -64,6 +64,24 @@ module "lambda_roles" {
   bit_indices_table_arn       = module.dynamodb.bit_indices_table_arn
   baby_jubjub_private_key_arn = module.secrets.baby_jubjub_private_key_arn
   hmac_key_arn                = module.secrets.hmac_key_arn
+
+  tags = local.common_tags
+}
+
+module "lambda" {
+  source = "./modules/lambda"
+
+  project_name = local.project
+
+  deployment_artifacts_bucket = module.storage.deployment_artifacts_bucket_name
+
+  issuer_lambda_role_arn            = module.lambda_roles.issuer_lambda_role_arn
+  revocation_lambda_role_arn        = module.lambda_roles.revocation_lambda_role_arn
+  free_lambda_role_arn              = module.lambda_roles.free_lambda_role_arn
+  bitstring_updater_lambda_role_arn = module.lambda_roles.bitstring_updater_lambda_role_arn
+
+  credentials_table_stream_arn = module.dynamodb.credentials_table_stream_arn
+  bit_indices_table_stream_arn = module.dynamodb.bit_indices_table_stream_arn
 
   tags = local.common_tags
 }
