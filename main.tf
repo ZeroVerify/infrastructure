@@ -84,4 +84,6 @@ module "lambda" {
   bit_indices_table_stream_arn = module.dynamodb.bit_indices_table_stream_arn
 
   tags = local.common_tags
+
+  depends_on = [module.storage]
 }
