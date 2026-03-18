@@ -1,0 +1,36 @@
+name: OpenTofu Apply
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  apply:
+    name: Apply
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::043189681060:role/ZeroVerifyGitHubActionsInfra
+          aws-region: us-east-1
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.11.2
+
+      - name: OpenTofu Init
+        run: tofu init
+
+      - name: OpenTofu Apply
+        run: tofu apply -auto-approve -input=false
