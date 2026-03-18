@@ -150,6 +150,17 @@ resource "aws_iam_role_policy" "free_lambda" {
         Resource = var.bit_indices_table_arn
       },
       {
+        Sid    = "DynamoDBStreamAccess"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator",
+          "dynamodb:DescribeStream",
+          "dynamodb:ListStreams"
+        ]
+        Resource = "${var.credentials_table_arn}/stream/*"
+      },
+      {
         Sid    = "CloudWatchLogs"
         Effect = "Allow"
         Action = [
@@ -190,6 +201,17 @@ resource "aws_iam_role_policy" "bitstring_updater_lambda" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
+      {
+        Sid    = "DynamoDBStreamAccess"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator",
+          "dynamodb:DescribeStream",
+          "dynamodb:ListStreams"
+        ]
+        Resource = "${var.bit_indices_table_arn}/stream/*"
+      },
       {
         Sid    = "CloudWatchLogs"
         Effect = "Allow"
