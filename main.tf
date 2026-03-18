@@ -8,6 +8,14 @@ locals {
   }
 }
 
+module "storage" {
+  source = "./modules/storage"
+
+  project_name = local.project
+
+  tags = local.common_tags
+}
+
 module "github_oidc" {
   source = "./modules/github-oidc"
 
@@ -25,8 +33,9 @@ module "github_oidc" {
   infrastructure_role_name    = "ZeroVerifyGitHubActionsInfra"
   lambda_deployment_role_name = "ZeroVerifyGitHubActionsLambdaDeployment"
 
-  aws_region = local.aws_region
-  tags       = local.common_tags
+  aws_region                  = local.aws_region
+  lambda_artifacts_bucket_arn = module.storage.lambda_artifacts_bucket_arn
+  tags                        = local.common_tags
 }
 
 module "dynamodb" {

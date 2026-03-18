@@ -28,8 +28,8 @@ resource "aws_iam_policy" "lambda_deployment" {
           "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::zeroverify-*",
-          "arn:aws:s3:::zeroverify-*/*"
+          var.lambda_artifacts_bucket_arn,
+          "${var.lambda_artifacts_bucket_arn}/*"
         ]
       },
       {
