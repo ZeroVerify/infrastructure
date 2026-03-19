@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/archive"
       version = "~> 2.7"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 5.0"
+    }
   }
 
   backend "s3" {
@@ -30,4 +34,7 @@ provider "aws" {
       ManagedBy = "OpenTofu"
     }
   }
+}
+
+provider "cloudflare" {
 }

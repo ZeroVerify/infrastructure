@@ -1,6 +1,8 @@
 locals {
-  project    = "zeroverify"
-  aws_region = "us-east-1"
+  project            = "zeroverify"
+  aws_region         = "us-east-1"
+  domain_name        = "zeroverify.net"
+  cloudflare_zone_id = "1263138b7d733aa1804fdc0b39c97c23"
 
   common_tags = {
     Project   = "ZeroVerify"
@@ -12,6 +14,15 @@ module "storage" {
   source = "./modules/storage"
 
   project_name = local.project
+
+  tags = local.common_tags
+}
+
+module "dns" {
+  source = "./modules/dns"
+
+  domain_name        = local.domain_name
+  cloudflare_zone_id = local.cloudflare_zone_id
 
   tags = local.common_tags
 }
