@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 resource "aws_lambda_function" "issuer" {
   function_name = "${var.project_name}-issuer"
   role          = var.issuer_lambda_role_arn
@@ -13,7 +15,44 @@ resource "aws_lambda_function" "issuer" {
 
   environment {
     variables = {
-      ENVIRONMENT = "production"
+      ENVIRONMENT            = "production"
+      PRIMARY_REGION         = var.primary_region
+      CREDENTIALS_TABLE_NAME = var.credentials_table_name
+      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      source_code_hash
+    ]
+  }
+
+  tags = var.tags
+}
+
+resource "aws_lambda_function" "issuer_replica" {
+  for_each = toset(var.replica_regions)
+
+  region        = each.value
+  function_name = "${var.project_name}-issuer"
+  role          = var.issuer_lambda_role_arn
+  handler       = "bootstrap"
+  runtime       = "provided.al2023"
+  architectures = ["arm64"]
+
+  s3_bucket = var.deployment_artifacts_bucket
+  s3_key    = "lambda/issuer-lambda.zip"
+
+  memory_size = 512
+  timeout     = 30
+
+  environment {
+    variables = {
+      ENVIRONMENT            = "production"
+      PRIMARY_REGION         = var.primary_region
+      CREDENTIALS_TABLE_NAME = var.credentials_table_name
+      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
     }
   }
 
@@ -41,7 +80,44 @@ resource "aws_lambda_function" "revocation" {
 
   environment {
     variables = {
-      ENVIRONMENT = "production"
+      ENVIRONMENT            = "production"
+      PRIMARY_REGION         = var.primary_region
+      CREDENTIALS_TABLE_NAME = var.credentials_table_name
+      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      source_code_hash
+    ]
+  }
+
+  tags = var.tags
+}
+
+resource "aws_lambda_function" "revocation_replica" {
+  for_each = toset(var.replica_regions)
+
+  region        = each.value
+  function_name = "${var.project_name}-revocation"
+  role          = var.revocation_lambda_role_arn
+  handler       = "bootstrap"
+  runtime       = "provided.al2023"
+  architectures = ["arm64"]
+
+  s3_bucket = var.deployment_artifacts_bucket
+  s3_key    = "lambda/revocation-lambda.zip"
+
+  memory_size = 256
+  timeout     = 15
+
+  environment {
+    variables = {
+      ENVIRONMENT            = "production"
+      PRIMARY_REGION         = var.primary_region
+      CREDENTIALS_TABLE_NAME = var.credentials_table_name
+      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
     }
   }
 
@@ -69,7 +145,10 @@ resource "aws_lambda_function" "free" {
 
   environment {
     variables = {
-      ENVIRONMENT = "production"
+      ENVIRONMENT            = "production"
+      PRIMARY_REGION         = var.primary_region
+      CREDENTIALS_TABLE_NAME = var.credentials_table_name
+      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
     }
   }
 
@@ -97,7 +176,10 @@ resource "aws_lambda_function" "bitstring_updater" {
 
   environment {
     variables = {
-      ENVIRONMENT = "production"
+      ENVIRONMENT            = "production"
+      PRIMARY_REGION         = var.primary_region
+      CREDENTIALS_TABLE_NAME = var.credentials_table_name
+      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
     }
   }
 

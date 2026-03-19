@@ -3,6 +3,18 @@ variable "project_name" {
   type        = string
 }
 
+variable "primary_region" {
+  description = "Primary region for writes"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "replica_regions" {
+  description = "Regions where issuer and revocation will be replicated to"
+  type        = list(string)
+  default     = []
+}
+
 variable "deployment_artifacts_bucket" {
   description = "Name of the S3 bucket containing Lambda deployment artifacts"
   type        = string
@@ -28,8 +40,18 @@ variable "bitstring_updater_lambda_role_arn" {
   type        = string
 }
 
+variable "credentials_table_name" {
+  description = "Name of the credentials DynamoDB table"
+  type        = string
+}
+
 variable "credentials_table_stream_arn" {
   description = "ARN of the credentials DynamoDB table stream"
+  type        = string
+}
+
+variable "bit_indices_table_name" {
+  description = "Name of the bit_indices DynamoDB table"
   type        = string
 }
 

@@ -1,39 +1,37 @@
-output "issuer_lambda_arn" {
-  description = "ARN of the issuer Lambda function"
-  value       = aws_lambda_function.issuer.arn
+# Issuer Lambda - map of region to ARN
+output "issuer_lambda_arns" {
+  description = "Map of region to issuer Lambda function ARN"
+  value = merge(
+    {
+      (data.aws_region.current.id) = aws_lambda_function.issuer.arn
+    },
+    {
+      for region, lambda in aws_lambda_function.issuer_replica : region => lambda.arn
+    }
+  )
 }
 
-output "issuer_lambda_name" {
-  description = "Name of the issuer Lambda function"
-  value       = aws_lambda_function.issuer.function_name
+# Revocation Lambda - map of region to ARN
+output "revocation_lambda_arns" {
+  description = "Map of region to revocation Lambda function ARN"
+  value = merge(
+    {
+      (data.aws_region.current.id) = aws_lambda_function.revocation.arn
+    },
+    {
+      for region, lambda in aws_lambda_function.revocation_replica : region => lambda.arn
+    }
+  )
 }
 
-output "revocation_lambda_arn" {
-  description = "ARN of the revocation Lambda function"
-  value       = aws_lambda_function.revocation.arn
-}
-
-output "revocation_lambda_name" {
-  description = "Name of the revocation Lambda function"
-  value       = aws_lambda_function.revocation.function_name
-}
-
+# Free Lambda - primary region only
 output "free_lambda_arn" {
-  description = "ARN of the free Lambda function"
+  description = "ARN of the free Lambda function (us-east-1 only)"
   value       = aws_lambda_function.free.arn
 }
 
-output "free_lambda_name" {
-  description = "Name of the free Lambda function"
-  value       = aws_lambda_function.free.function_name
-}
-
+# Bitstring Updater Lambda - primary region only
 output "bitstring_updater_lambda_arn" {
-  description = "ARN of the bitstring updater Lambda function"
+  description = "ARN of the bitstring updater Lambda function (us-east-1 only)"
   value       = aws_lambda_function.bitstring_updater.arn
-}
-
-output "bitstring_updater_lambda_name" {
-  description = "Name of the bitstring updater Lambda function"
-  value       = aws_lambda_function.bitstring_updater.function_name
 }

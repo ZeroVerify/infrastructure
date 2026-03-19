@@ -1,9 +1,11 @@
+data "aws_region" "current" {}
+
 resource "aws_dynamodb_table" "credentials" {
-  name           = "${var.project_name}-credentials"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "subject_id"
-  range_key      = "credential_id"
-  stream_enabled = true
+  name             = "${var.project_name}-credentials"
+  billing_mode     = "PAY_PER_REQUEST"
+  hash_key         = "subject_id"
+  range_key        = "credential_id"
+  stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
@@ -21,18 +23,21 @@ resource "aws_dynamodb_table" "credentials" {
     enabled        = true
   }
 
-  replica {
-    region_name = var.replica_region
+  dynamic "replica" {
+    for_each = toset(var.replica_regions)
+    content {
+      region_name = replica.value
+    }
   }
 
   tags = var.tags
 }
 
 resource "aws_dynamodb_table" "bit_indices" {
-  name           = "${var.project_name}-bit-indices"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "bit_index"
-  stream_enabled = true
+  name             = "${var.project_name}-bit-indices"
+  billing_mode     = "PAY_PER_REQUEST"
+  hash_key         = "bit_index"
+  stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
@@ -40,8 +45,11 @@ resource "aws_dynamodb_table" "bit_indices" {
     type = "N"
   }
 
-  replica {
-    region_name = var.replica_region
+  dynamic "replica" {
+    for_each = toset(var.replica_regions)
+    content {
+      region_name = replica.value
+    }
   }
 
   tags = var.tags
