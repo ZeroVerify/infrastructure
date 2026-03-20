@@ -31,8 +31,8 @@ variable "aws_region" {
 }
 
 variable "deployment_artifacts_bucket_arn" {
-  description = "ARN of the deployment artifacts S3 bucket"
-  type        = string
+  description = "Map of region to ARN of the deployment artifacts S3 buckets"
+  type        = map(string)
 }
 
 variable "artifacts_bucket_arn" {

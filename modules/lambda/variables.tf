@@ -16,8 +16,8 @@ variable "replica_regions" {
 }
 
 variable "deployment_artifacts_bucket" {
-  description = "Name of the S3 bucket containing Lambda deployment artifacts"
-  type        = string
+  description = "Map of region to S3 bucket name containing Lambda deployment artifacts"
+  type        = map(string)
 }
 
 variable "issuer_lambda_role_arn" {

@@ -14,7 +14,9 @@ locals {
 module "storage" {
   source = "./modules/storage"
 
-  project_name = local.project
+  project_name    = local.project
+  primary_region  = local.primary_region
+  replica_regions = local.replica_regions
 
   tags = local.common_tags
 }
@@ -111,7 +113,7 @@ module "lambda" {
   bit_indices_table_name       = module.dynamodb.bit_indices_table_name
   bit_indices_table_stream_arn = module.dynamodb.bit_indices_table_stream_arn
 
-  artifacts_bucket_name = module.storage.artifacts_bucket_arn
+  artifacts_bucket_name = module.storage.artifacts_bucket_name
 
   tags = local.common_tags
 

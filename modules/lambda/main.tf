@@ -7,7 +7,7 @@ resource "aws_lambda_function" "issuer" {
   runtime       = "provided.al2023"
   architectures = ["arm64"]
 
-  s3_bucket = var.deployment_artifacts_bucket
+  s3_bucket = var.deployment_artifacts_bucket[var.primary_region]
   s3_key    = "lambda/issuer-lambda.zip"
 
   memory_size = 512
@@ -41,7 +41,7 @@ resource "aws_lambda_function" "issuer_replica" {
   runtime       = "provided.al2023"
   architectures = ["arm64"]
 
-  s3_bucket = var.deployment_artifacts_bucket
+  s3_bucket = var.deployment_artifacts_bucket[each.value]
   s3_key    = "lambda/issuer-lambda.zip"
 
   memory_size = 512
@@ -72,7 +72,7 @@ resource "aws_lambda_function" "revocation" {
   runtime       = "provided.al2023"
   architectures = ["arm64"]
 
-  s3_bucket = var.deployment_artifacts_bucket
+  s3_bucket = var.deployment_artifacts_bucket[var.primary_region]
   s3_key    = "lambda/revocation-lambda.zip"
 
   memory_size = 256
@@ -106,7 +106,7 @@ resource "aws_lambda_function" "revocation_replica" {
   runtime       = "provided.al2023"
   architectures = ["arm64"]
 
-  s3_bucket = var.deployment_artifacts_bucket
+  s3_bucket = var.deployment_artifacts_bucket[each.value]
   s3_key    = "lambda/revocation-lambda.zip"
 
   memory_size = 256
@@ -137,7 +137,7 @@ resource "aws_lambda_function" "free" {
   runtime       = "provided.al2023"
   architectures = ["arm64"]
 
-  s3_bucket = var.deployment_artifacts_bucket
+  s3_bucket = var.deployment_artifacts_bucket[var.primary_region]
   s3_key    = "lambda/free-lambda.zip"
 
   memory_size = 256
@@ -168,7 +168,7 @@ resource "aws_lambda_function" "bitstring_updater" {
   runtime       = "provided.al2023"
   architectures = ["arm64"]
 
-  s3_bucket = var.deployment_artifacts_bucket
+  s3_bucket = var.deployment_artifacts_bucket[var.primary_region]
   s3_key    = "lambda/bitstring-updater-lambda.zip"
 
   memory_size = 512

@@ -1,11 +1,21 @@
+locals {
+  all_regions = concat([var.primary_region], var.replica_regions)
+}
+
 resource "aws_s3_bucket" "deployment_artifacts" {
-  bucket = "${var.project_name}-deployment-artifacts"
+  for_each = toset(local.all_regions)
+
+  bucket = "${var.project_name}-deployment-artifacts-${each.key}"
+  region = each.key
 
   tags = var.tags
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "deployment_artifacts" {
-  bucket = aws_s3_bucket.deployment_artifacts.id
+  for_each = toset(local.all_regions)
+
+  bucket = aws_s3_bucket.deployment_artifacts[each.key].id
+  region = each.key
 
   rule {
     id     = "abort-incomplete-uploads"
@@ -20,7 +30,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "deployment_artifacts" {
 }
 
 resource "aws_s3_bucket_public_access_block" "deployment_artifacts" {
-  bucket = aws_s3_bucket.deployment_artifacts.id
+  for_each = toset(local.all_regions)
+
+  bucket = aws_s3_bucket.deployment_artifacts[each.key].id
+  region = each.key
 
   block_public_acls       = true
   block_public_policy     = true
@@ -68,12 +81,14 @@ data "archive_file" "bitstring_updater_stub" {
   }
 }
 
-# Upload stub artifacts to S3
 resource "aws_s3_object" "issuer_stub" {
-  bucket = aws_s3_bucket.deployment_artifacts.id
+  for_each = toset(local.all_regions)
+
+  bucket = aws_s3_bucket.deployment_artifacts[each.key].id
   key    = "lambda/issuer-lambda.zip"
   source = data.archive_file.issuer_stub.output_path
   etag   = data.archive_file.issuer_stub.output_md5
+  region = each.key
 
   lifecycle {
     ignore_changes = [etag, source, source_hash]
@@ -81,10 +96,13 @@ resource "aws_s3_object" "issuer_stub" {
 }
 
 resource "aws_s3_object" "revocation_stub" {
-  bucket = aws_s3_bucket.deployment_artifacts.id
+  for_each = toset(local.all_regions)
+
+  bucket = aws_s3_bucket.deployment_artifacts[each.key].id
   key    = "lambda/revocation-lambda.zip"
   source = data.archive_file.revocation_stub.output_path
   etag   = data.archive_file.revocation_stub.output_md5
+  region = each.key
 
   lifecycle {
     ignore_changes = [etag, source, source_hash]
@@ -92,10 +110,13 @@ resource "aws_s3_object" "revocation_stub" {
 }
 
 resource "aws_s3_object" "free_stub" {
-  bucket = aws_s3_bucket.deployment_artifacts.id
+  for_each = toset(local.all_regions)
+
+  bucket = aws_s3_bucket.deployment_artifacts[each.key].id
   key    = "lambda/free-lambda.zip"
   source = data.archive_file.free_stub.output_path
   etag   = data.archive_file.free_stub.output_md5
+  region = each.key
 
   lifecycle {
     ignore_changes = [etag, source, source_hash]
@@ -103,24 +124,25 @@ resource "aws_s3_object" "free_stub" {
 }
 
 resource "aws_s3_object" "bitstring_updater_stub" {
-  bucket = aws_s3_bucket.deployment_artifacts.id
+  for_each = toset(local.all_regions)
+
+  bucket = aws_s3_bucket.deployment_artifacts[each.key].id
   key    = "lambda/bitstring-updater-lambda.zip"
   source = data.archive_file.bitstring_updater_stub.output_path
   etag   = data.archive_file.bitstring_updater_stub.output_md5
+  region = each.key
 
   lifecycle {
     ignore_changes = [etag, source, source_hash]
   }
 }
 
-# Public artifacts bucket for circuits, keys, and bitstring
 resource "aws_s3_bucket" "artifacts" {
   bucket = "${var.project_name}-artifacts"
 
   tags = var.tags
 }
 
-# Enable public read access for artifacts bucket
 resource "aws_s3_bucket_public_access_block" "artifacts" {
   bucket = aws_s3_bucket.artifacts.id
 
@@ -130,7 +152,6 @@ resource "aws_s3_bucket_public_access_block" "artifacts" {
   restrict_public_buckets = false
 }
 
-# Bucket policy to allow public read
 resource "aws_s3_bucket_policy" "artifacts" {
   bucket = aws_s3_bucket.artifacts.id
 
@@ -150,7 +171,6 @@ resource "aws_s3_bucket_policy" "artifacts" {
   depends_on = [aws_s3_bucket_public_access_block.artifacts]
 }
 
-# CORS configuration for browser access
 resource "aws_s3_bucket_cors_configuration" "artifacts" {
   bucket = aws_s3_bucket.artifacts.id
 
@@ -163,7 +183,6 @@ resource "aws_s3_bucket_cors_configuration" "artifacts" {
   }
 }
 
-# Versioning for artifacts bucket
 resource "aws_s3_bucket_versioning" "artifacts" {
   bucket = aws_s3_bucket.artifacts.id
 
@@ -172,7 +191,6 @@ resource "aws_s3_bucket_versioning" "artifacts" {
   }
 }
 
-# Lifecycle policy for old versions
 resource "aws_s3_bucket_lifecycle_configuration" "artifacts" {
   bucket = aws_s3_bucket.artifacts.id
 

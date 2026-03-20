@@ -39,7 +39,7 @@ resource "aws_route53_record" "api_latency" {
   for_each = var.api_gateway_endpoints
 
   zone_id        = aws_route53_zone.api.zone_id
-  name           = "api.${var.domain_name}"
+  name           = "gw.api.${var.domain_name}"
   type           = "CNAME"
   ttl            = 60
   records        = [trimprefix(trimsuffix(each.value, "/"), "https://")]

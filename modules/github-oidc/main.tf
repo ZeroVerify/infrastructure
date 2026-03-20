@@ -27,10 +27,12 @@ resource "aws_iam_policy" "lambda_deployment" {
           "s3:GetObject",
           "s3:ListBucket"
         ]
-        Resource = [
-          var.deployment_artifacts_bucket_arn,
-          "${var.deployment_artifacts_bucket_arn}/*"
-        ]
+        Resource = flatten([
+          for arn in values(var.deployment_artifacts_bucket_arn) : [
+            arn,
+            "${arn}/*"
+          ]
+        ])
       },
       {
         Sid    = "LambdaUpdate"
@@ -40,7 +42,7 @@ resource "aws_iam_policy" "lambda_deployment" {
           "lambda:GetFunction",
           "lambda:PublishVersion"
         ]
-        Resource = "arn:aws:lambda:${var.aws_region}:*:function:*"
+        Resource = "arn:aws:lambda:*:*:function:*"
       }
     ]
   })
