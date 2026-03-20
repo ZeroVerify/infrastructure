@@ -22,3 +22,13 @@ output "lambda_deployment_role_name" {
   description = "Name of the lambda deployment IAM role"
   value       = aws_iam_role.lambda_deployment.name
 }
+
+output "artifact_upload_role_arn" {
+  description = "ARN of the artifact upload IAM role"
+  value       = aws_iam_role.artifact_upload.arn
+}
+
+output "artifact_upload_role_name" {
+  description = "Name of the artifact upload IAM role"
+  value       = aws_iam_role.artifact_upload.name
+}

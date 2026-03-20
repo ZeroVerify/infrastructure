@@ -46,11 +46,17 @@ module "github_oidc" {
     "ZeroVerify/issuer-lambda",
   ]
 
-  infrastructure_role_name    = "ZeroVerifyGitHubActionsInfra"
-  lambda_deployment_role_name = "ZeroVerifyGitHubActionsLambdaDeployment"
+  artifact_repositories = [
+    "ZeroVerify/circuits",
+  ]
+
+  infrastructure_role_name      = "ZeroVerifyGitHubActionsInfra"
+  lambda_deployment_role_name   = "ZeroVerifyGitHubActionsLambdaDeployment"
+  artifact_deployment_role_name = "ZeroVerifyGitHubActionsArtifactUpload"
 
   aws_region                      = local.primary_region
   deployment_artifacts_bucket_arn = module.storage.deployment_artifacts_bucket_arn
+  artifacts_bucket_arn            = module.storage.artifacts_bucket_arn
   tags                            = local.common_tags
 }
 
