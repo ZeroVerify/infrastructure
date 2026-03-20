@@ -22,10 +22,14 @@ module "storage" {
 module "dns" {
   source = "./modules/dns"
 
-  domain_name        = local.domain_name
-  cloudflare_zone_id = local.cloudflare_zone_id
+  domain_name                  = local.domain_name
+  cloudflare_zone_id           = local.cloudflare_zone_id
+  api_gateway_endpoints        = module.api_gateway.api_endpoints
+  artifacts_bucket_domain_name = module.storage.artifacts_bucket_domain_name
 
   tags = local.common_tags
+
+  depends_on = [module.api_gateway, module.storage]
 }
 
 module "github_oidc" {

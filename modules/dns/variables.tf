@@ -8,6 +8,17 @@ variable "cloudflare_zone_id" {
   type        = string
 }
 
+variable "api_gateway_endpoints" {
+  description = "Map of region to API Gateway endpoint URLs"
+  type        = map(string)
+  default     = {}
+}
+
+variable "artifacts_bucket_domain_name" {
+  description = "Domain name of the artifacts S3 bucket"
+  type        = string
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
