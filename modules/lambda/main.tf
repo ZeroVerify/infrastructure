@@ -180,6 +180,7 @@ resource "aws_lambda_function" "bitstring_updater" {
       PRIMARY_REGION         = var.primary_region
       CREDENTIALS_TABLE_NAME = var.credentials_table_name
       BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
+      ARTIFACTS_BUCKET_NAME  = var.artifacts_bucket_name
     }
   }
 

@@ -60,6 +60,11 @@ variable "bit_indices_table_stream_arn" {
   type        = string
 }
 
+variable "artifacts_bucket_name" {
+  description = "Name of the artifacts S3 bucket"
+  type        = string
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
