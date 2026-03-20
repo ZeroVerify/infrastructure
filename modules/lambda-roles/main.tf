@@ -213,6 +213,16 @@ resource "aws_iam_role_policy" "bitstring_updater_lambda" {
         Resource = "${var.bit_indices_table_arn}/stream/*"
       },
       {
+        Sid    = "S3BitstringWrite"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:GetObject"
+        ]
+        Resource = "${var.artifacts_bucket_arn}/bitstring/*"
+      },
+      {
         Sid    = "CloudWatchLogs"
         Effect = "Allow"
         Action = [

@@ -77,6 +77,8 @@ module "lambda_roles" {
   baby_jubjub_private_key_arn = module.secrets.baby_jubjub_private_key_arn
   hmac_key_arn                = module.secrets.hmac_key_arn
 
+  artifacts_bucket_arn = module.storage.artifacts_bucket_arn
+
   tags = local.common_tags
 }
 
@@ -99,7 +101,39 @@ module "lambda" {
   bit_indices_table_name       = module.dynamodb.bit_indices_table_name
   bit_indices_table_stream_arn = module.dynamodb.bit_indices_table_stream_arn
 
+  artifacts_bucket_name = module.storage.artifacts_bucket_arn
+
   tags = local.common_tags
 
   depends_on = [module.storage]
+}
+
+module "api_gateway" {
+  source = "./modules/api-gateway"
+
+  project_name    = local.project
+  primary_region  = local.primary_region
+  replica_regions = local.replica_regions
+
+  log_retention_days = 30
+
+  lambda_functions = {
+    issuer = {
+      invoke_arn    = module.lambda.issuer_lambda_invoke_arns
+      function_name = module.lambda.issuer_lambda_names
+    }
+    revocation = {
+      invoke_arn    = module.lambda.revocation_lambda_invoke_arns
+      function_name = module.lambda.revocation_lambda_names
+    }
+  }
+
+  routes = {
+    "POST /api/v1/credentials/issue"  = "issuer"
+    "POST /api/v1/credentials/revoke" = "revocation"
+  }
+
+  tags = local.common_tags
+
+  depends_on = [module.lambda]
 }
