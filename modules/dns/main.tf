@@ -34,3 +34,27 @@ resource "cloudflare_dns_record" "api_ns" {
   type    = "NS"
   ttl     = 300
 }
+
+resource "aws_route53_record" "api_latency" {
+  for_each = var.api_gateway_endpoints
+
+  zone_id        = aws_route53_zone.api.zone_id
+  name           = "api.${var.domain_name}"
+  type           = "CNAME"
+  ttl            = 60
+  records        = [trimprefix(trimsuffix(each.value, "/"), "https://")]
+  set_identifier = each.key
+
+  latency_routing_policy {
+    region = each.key
+  }
+}
+
+resource "cloudflare_dns_record" "artifacts" {
+  zone_id = data.cloudflare_zone.main.id
+  name    = "artifacts"
+  content = var.artifacts_bucket_domain_name
+  type    = "CNAME"
+  ttl     = 300
+  proxied = false
+}
