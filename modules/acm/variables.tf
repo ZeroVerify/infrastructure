@@ -3,18 +3,8 @@ variable "domain_name" {
   type        = string
 }
 
-variable "bucket_regional_domain_name" {
-  description = "Regional domain name of the artifacts S3 bucket"
-  type        = string
-}
-
 variable "api_zone_id" {
   description = "Route53 hosted zone ID for the api subdomain"
-  type        = string
-}
-
-variable "certificate_arn" {
-  description = "ARN of the ACM certificate to use for HTTPS"
   type        = string
 }
 
