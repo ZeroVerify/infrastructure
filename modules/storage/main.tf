@@ -182,37 +182,3 @@ resource "aws_s3_bucket_cors_configuration" "artifacts" {
     max_age_seconds = 3600
   }
 }
-
-resource "aws_s3_bucket_versioning" "artifacts" {
-  bucket = aws_s3_bucket.artifacts.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "aws_s3_bucket_lifecycle_configuration" "artifacts" {
-  bucket = aws_s3_bucket.artifacts.id
-
-  rule {
-    id     = "expire-old-versions"
-    status = "Enabled"
-
-    filter {}
-
-    noncurrent_version_expiration {
-      noncurrent_days = 30
-    }
-  }
-
-  rule {
-    id     = "abort-incomplete-uploads"
-    status = "Enabled"
-
-    filter {}
-
-    abort_incomplete_multipart_upload {
-      days_after_initiation = 7
-    }
-  }
-}

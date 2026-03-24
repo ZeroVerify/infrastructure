@@ -14,11 +14,6 @@ variable "api_gateway_endpoints" {
   default     = {}
 }
 
-variable "artifacts_bucket_domain_name" {
-  description = "Domain name of the artifacts S3 bucket"
-  type        = string
-}
-
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
