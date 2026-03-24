@@ -50,11 +50,3 @@ resource "aws_route53_record" "api_latency" {
   }
 }
 
-resource "cloudflare_dns_record" "artifacts" {
-  zone_id = data.cloudflare_zone.main.id
-  name    = "artifacts"
-  content = var.artifacts_bucket_domain_name
-  type    = "CNAME"
-  ttl     = 300
-  proxied = false
-}

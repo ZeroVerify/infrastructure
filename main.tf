@@ -24,14 +24,23 @@ module "storage" {
 module "dns" {
   source = "./modules/dns"
 
-  domain_name                  = local.domain_name
-  cloudflare_zone_id           = local.cloudflare_zone_id
-  api_gateway_endpoints        = module.api_gateway.api_endpoints
-  artifacts_bucket_domain_name = module.storage.artifacts_bucket_domain_name
+  domain_name           = local.domain_name
+  cloudflare_zone_id    = local.cloudflare_zone_id
+  api_gateway_endpoints = module.api_gateway.api_endpoints
 
   tags = local.common_tags
 
-  depends_on = [module.api_gateway, module.storage]
+  depends_on = [module.api_gateway]
+}
+
+module "cloudfront" {
+  source = "./modules/cloudfront"
+
+  domain_name                 = local.domain_name
+  bucket_regional_domain_name = module.storage.artifacts_bucket_regional_domain_name
+  api_zone_id                 = module.dns.api_zone_id
+
+  tags = local.common_tags
 }
 
 module "github_oidc" {

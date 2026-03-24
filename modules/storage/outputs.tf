@@ -18,11 +18,6 @@ output "artifacts_bucket_arn" {
   value       = aws_s3_bucket.artifacts.arn
 }
 
-output "artifacts_bucket_domain_name" {
-  description = "Domain name of the artifacts bucket"
-  value       = aws_s3_bucket.artifacts.bucket_domain_name
-}
-
 output "artifacts_bucket_regional_domain_name" {
   description = "Regional domain name of the artifacts bucket"
   value       = aws_s3_bucket.artifacts.bucket_regional_domain_name
