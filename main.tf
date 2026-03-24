@@ -33,12 +33,22 @@ module "dns" {
   depends_on = [module.api_gateway]
 }
 
+module "acm" {
+  source = "./modules/acm"
+
+  domain_name = local.domain_name
+  api_zone_id = module.dns.api_zone_id
+
+  tags = local.common_tags
+}
+
 module "cloudfront" {
   source = "./modules/cloudfront"
 
   domain_name                 = local.domain_name
   bucket_regional_domain_name = module.storage.artifacts_bucket_regional_domain_name
   api_zone_id                 = module.dns.api_zone_id
+  certificate_arn             = module.acm.certificate_arn
 
   tags = local.common_tags
 }

@@ -1,35 +1,3 @@
-resource "aws_acm_certificate" "artifacts" {
-  domain_name       = "artifacts.api.${var.domain_name}"
-  validation_method = "DNS"
-
-  tags = var.tags
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_record" "artifacts_cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.artifacts.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id = var.api_zone_id
-  name    = each.value.name
-  type    = each.value.type
-  records = [each.value.record]
-  ttl     = 60
-}
-
-resource "aws_acm_certificate_validation" "artifacts" {
-  certificate_arn         = aws_acm_certificate.artifacts.arn
-  validation_record_fqdns = [for record in aws_route53_record.artifacts_cert_validation : record.fqdn]
-}
-
 resource "aws_cloudfront_distribution" "artifacts" {
   aliases = ["artifacts.api.${var.domain_name}"]
   enabled = true
@@ -55,7 +23,7 @@ resource "aws_cloudfront_distribution" "artifacts" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate_validation.artifacts.certificate_arn
+    acm_certificate_arn      = var.certificate_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
