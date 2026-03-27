@@ -2,6 +2,15 @@ data "cloudflare_zone" "main" {
   zone_id = var.cloudflare_zone_id
 }
 
+resource "cloudflare_dns_record" "apex" {
+  zone_id = data.cloudflare_zone.main.id
+  name    = "@"
+  content = "www.${var.domain_name}"
+  type    = "CNAME"
+  ttl     = 1
+  proxied = true
+}
+
 resource "cloudflare_dns_record" "www" {
   zone_id = data.cloudflare_zone.main.id
   name    = "www"
