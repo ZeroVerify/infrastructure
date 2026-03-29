@@ -127,6 +127,9 @@ module "lambda" {
   free_lambda_role_arn              = module.lambda_roles.free_lambda_role_arn
   bitstring_updater_lambda_role_arn = module.lambda_roles.bitstring_updater_lambda_role_arn
 
+  secret_name_hmac_key  = module.secrets.hmac_key_name
+  secret_name_eddsa_key = module.secrets.baby_jubjub_private_key_name
+
   credentials_table_name       = module.dynamodb.credentials_table_name
   credentials_table_stream_arn = module.dynamodb.credentials_table_stream_arn
   bit_indices_table_name       = module.dynamodb.bit_indices_table_name

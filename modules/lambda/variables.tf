@@ -65,6 +65,16 @@ variable "artifacts_bucket_name" {
   type        = string
 }
 
+variable "secret_name_hmac_key" {
+  description = "AWS Secrets Manager secret name for the HMAC key"
+  type        = string
+}
+
+variable "secret_name_eddsa_key" {
+  description = "AWS Secrets Manager secret name for the EdDSA key"
+  type        = string
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)

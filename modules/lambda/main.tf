@@ -15,10 +15,15 @@ resource "aws_lambda_function" "issuer" {
 
   environment {
     variables = {
-      ENVIRONMENT            = "production"
-      PRIMARY_REGION         = var.primary_region
-      CREDENTIALS_TABLE_NAME = var.credentials_table_name
-      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
+      KEYCLOAK_TOKEN_URL         = "https://keycloak.zeroverify.net/realms/zeroverify/protocol/openid-connect/token"
+      KEYCLOAK_CLIENT_ID         = "zeroverify-wallet"
+      OAUTH_REDIRECT_URI         = "https://wallet.zeroverify.net/callback"
+      ISSUER_DID                 = "did:web:api.zeroverify.net"
+      PRIMARY_REGION             = var.primary_region
+      SECRET_NAME_HMAC_KEY       = var.secret_name_hmac_key
+      SECRET_NAME_EDDSA_KEY      = var.secret_name_eddsa_key
+      DYNAMODB_CREDENTIALS_TABLE = var.credentials_table_name
+      DYNAMODB_BIT_INDICES_TABLE = var.bit_indices_table_name
     }
   }
 
@@ -49,10 +54,15 @@ resource "aws_lambda_function" "issuer_replica" {
 
   environment {
     variables = {
-      ENVIRONMENT            = "production"
-      PRIMARY_REGION         = var.primary_region
-      CREDENTIALS_TABLE_NAME = var.credentials_table_name
-      BIT_INDICES_TABLE_NAME = var.bit_indices_table_name
+      KEYCLOAK_TOKEN_URL         = "https://keycloak.zeroverify.net/realms/zeroverify/protocol/openid-connect/token"
+      KEYCLOAK_CLIENT_ID         = "zeroverify-wallet"
+      OAUTH_REDIRECT_URI         = "https://wallet.zeroverify.net/callback"
+      ISSUER_DID                 = "did:web:api.zeroverify.net"
+      PRIMARY_REGION             = var.primary_region
+      SECRET_NAME_HMAC_KEY       = var.secret_name_hmac_key
+      SECRET_NAME_EDDSA_KEY      = var.secret_name_eddsa_key
+      DYNAMODB_CREDENTIALS_TABLE = var.credentials_table_name
+      DYNAMODB_BIT_INDICES_TABLE = var.bit_indices_table_name
     }
   }
 
