@@ -4,8 +4,8 @@ output "api_ids" {
 }
 
 output "api_endpoints" {
-  value       = { for region, api in aws_apigatewayv2_api.api : region => api.api_endpoint }
-  description = "Map of region to default API endpoint"
+  value       = { for region, domain in aws_apigatewayv2_domain_name.api : region => domain.domain_name_configuration[0].target_domain_name }
+  description = "Map of region to custom domain target hostname for DNS"
 }
 
 output "log_group_names" {

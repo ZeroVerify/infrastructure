@@ -84,6 +84,30 @@ resource "aws_apigatewayv2_route" "api_routes" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration["${each.value.region}/${each.value.lambda_key}"].id}"
 }
 
+resource "aws_apigatewayv2_domain_name" "api" {
+  for_each = toset(concat([var.primary_region], var.replica_regions))
+
+  region      = each.value
+  domain_name = "gw.api.${var.domain_name}"
+
+  domain_name_configuration {
+    certificate_arn = var.certificate_arns[each.value]
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+
+  tags = var.tags
+}
+
+resource "aws_apigatewayv2_api_mapping" "api" {
+  for_each = toset(concat([var.primary_region], var.replica_regions))
+
+  region      = each.value
+  api_id      = aws_apigatewayv2_api.api[each.value].id
+  domain_name = aws_apigatewayv2_domain_name.api[each.value].id
+  stage       = aws_apigatewayv2_stage.default[each.value].id
+}
+
 resource "aws_lambda_permission" "api_gateway_invoke" {
   for_each = {
     for combo in flatten([

@@ -21,11 +21,40 @@ module "storage" {
   tags = local.common_tags
 }
 
-module "dns" {
-  source = "./modules/dns"
+module "dns_zone" {
+  source = "./modules/dns-zone"
+
+  domain_name = local.domain_name
+
+  tags = local.common_tags
+}
+
+module "acm" {
+  source = "./modules/acm"
+
+  domain_name     = local.domain_name
+  api_zone_id     = module.dns_zone.zone_id
+  primary_region  = local.primary_region
+  replica_regions = local.replica_regions
+
+  tags = local.common_tags
+}
+
+module "dns_cloudflare" {
+  source = "./modules/dns-cloudflare"
+
+  domain_name        = local.domain_name
+  cloudflare_zone_id = local.cloudflare_zone_id
+  api_name_servers   = module.dns_zone.name_servers
+
+  depends_on = [module.dns_zone]
+}
+
+module "dns_route53" {
+  source = "./modules/dns-route53"
 
   domain_name           = local.domain_name
-  cloudflare_zone_id    = local.cloudflare_zone_id
+  api_zone_id           = module.dns_zone.zone_id
   api_gateway_endpoints = module.api_gateway.api_endpoints
 
   tags = local.common_tags
@@ -33,22 +62,13 @@ module "dns" {
   depends_on = [module.api_gateway]
 }
 
-module "acm" {
-  source = "./modules/acm"
-
-  domain_name = local.domain_name
-  api_zone_id = module.dns.api_zone_id
-
-  tags = local.common_tags
-}
-
 module "cloudfront" {
   source = "./modules/cloudfront"
 
   domain_name                 = local.domain_name
   bucket_regional_domain_name = module.storage.artifacts_bucket_regional_domain_name
-  api_zone_id                 = module.dns.api_zone_id
-  certificate_arn             = module.acm.certificate_arn
+  api_zone_id                 = module.dns_zone.zone_id
+  certificate_arn             = module.acm.certificate_arns[local.primary_region]
 
   tags = local.common_tags
 }
@@ -148,6 +168,8 @@ module "api_gateway" {
   project_name    = local.project
   primary_region  = local.primary_region
   replica_regions = local.replica_regions
+  domain_name      = local.domain_name
+  certificate_arns = module.acm.certificate_arns
 
   log_retention_days = 30
 

@@ -1,17 +1,16 @@
 variable "domain_name" {
-  description = "Domain name for the hosted zone"
+  description = "Domain name"
   type        = string
 }
 
-variable "cloudflare_zone_id" {
-  description = "Cloudflare zone ID"
+variable "api_zone_id" {
+  description = "Route53 hosted zone ID for api subdomain"
   type        = string
 }
 
 variable "api_gateway_endpoints" {
   description = "Map of region to API Gateway endpoint URLs"
   type        = map(string)
-  default     = {}
 }
 
 variable "tags" {

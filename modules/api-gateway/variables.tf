@@ -26,6 +26,16 @@ variable "tags" {
   default     = {}
 }
 
+variable "domain_name" {
+  description = "Base domain name (e.g. zeroverify.net)"
+  type        = string
+}
+
+variable "certificate_arns" {
+  description = "Map of region to validated ACM certificate ARN for *.api.<domain_name>"
+  type        = map(string)
+}
+
 variable "lambda_functions" {
   description = "Map of Lambda functions to integrate with API Gateway"
   type = map(object({

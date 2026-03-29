@@ -1,4 +1,4 @@
-output "certificate_arn" {
-  description = "ARN of the validated ACM certificate"
-  value       = aws_acm_certificate_validation.api.certificate_arn
+output "certificate_arns" {
+  description = "Map of region to validated ACM certificate ARN"
+  value       = { for region, v in aws_acm_certificate_validation.api : region => v.certificate_arn }
 }
