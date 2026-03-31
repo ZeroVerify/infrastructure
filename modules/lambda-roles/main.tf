@@ -214,6 +214,12 @@ resource "aws_iam_role_policy" "bitstring_updater_lambda" {
         Resource = "${var.bit_indices_table_arn}/stream/*"
       },
       {
+        Sid    = "S3BitstringListBucket"
+        Effect = "Allow"
+        Action = ["s3:ListBucket"]
+        Resource = var.artifacts_bucket_arn
+      },
+      {
         Sid    = "S3BitstringWrite"
         Effect = "Allow"
         Action = [
