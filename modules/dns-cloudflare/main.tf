@@ -20,6 +20,15 @@ resource "cloudflare_dns_record" "www" {
   proxied = false
 }
 
+resource "cloudflare_dns_record" "wallet" {
+  zone_id = data.cloudflare_zone.main.id
+  name    = "wallet"
+  content = "zeroverify.github.io"
+  type    = "CNAME"
+  ttl     = 300
+  proxied = false
+}
+
 resource "cloudflare_dns_record" "keycloak" {
   zone_id = data.cloudflare_zone.main.id
   name    = "keycloak"
