@@ -184,6 +184,8 @@ module "api_gateway" {
     }
   }
 
+  allowed_origins = ["https://wallet.${local.domain_name}"]
+
   routes = {
     "POST /api/v1/credentials/issue"  = "issuer"
     "POST /api/v1/credentials/revoke" = "revocation"

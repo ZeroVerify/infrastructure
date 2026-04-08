@@ -48,3 +48,8 @@ variable "routes" {
   description = "Map of API routes to Lambda function keys"
   type        = map(string)
 }
+
+variable "allowed_origins" {
+  description = "List of allowed CORS origins"
+  type        = list(string)
+}
